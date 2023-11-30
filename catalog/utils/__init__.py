@@ -1,0 +1,1 @@
+from .catalog_functions import get_max_viewed_book
