@@ -52,7 +52,7 @@ def index(request):
 class BookListView(generic.ListView):
     model = Book
     template_name = 'catalog/books_list_page.html'
-    paginate_by = 2
+    paginate_by = 10
 
 
 class BookDetailView(LoginRequiredMixin, generic.DetailView):
