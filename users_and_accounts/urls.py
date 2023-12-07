@@ -3,10 +3,12 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
+    path('profile_edit/', views.profile_edit, name='profile_edit'),
+    path('register/', views.register_request, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='registration/logout.html'), name='logout'),
-    path('password_reset/', auth_views.PasswordResetView.as_view(template_name="registration/custom_password_reset_form.html",
-                                                                 email_template_name="registration/custom_password_reset_email.html"),
+    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='registration/custom_password_reset_form.html',
+                                                                 email_template_name='registration/custom_password_reset_email.html'),
          name='password_reset'),
     path('password_reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/custom_password_reset_complete.html'),
          name='password_reset_complete'),

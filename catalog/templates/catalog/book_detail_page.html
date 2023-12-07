@@ -1,15 +1,23 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-
-  <h1>Title: {{ object.title }}</h1>
-  <p><small>You viewed this book {{ book_views }} times.</small></p>
-  <p><strong>Author:</strong> <a href="">{{ book.author }}</a></p> <!-- author detail link not yet defined -->
-  <p><strong>Summary:</strong> {{ book.summary }}</p>
-  <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-<!--  <p><strong>Language:</strong> {{ book.language }}</p>-->
-  <p><strong>Language:</strong> {% for bookinstance in book.bookinstance_set.all %} {% ifchanged %} {{ bookinstance.language }} {% endifchanged %}  {% if not forloop.last %}, {% endif %}{% endfor %}</p>
-  <p><strong>Genre:</strong> {% for genre in book.genre.all %} {{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+  <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-6">
+          <h1>Title: {{ object.title }}</h1>
+          <p><small>You viewed this book {{ book_views }} times.</small></p>
+          <p><strong>Author:</strong> <a href="">{{ book.author }}</a></p> <!-- author detail link not yet defined -->
+          <p><strong>Summary:</strong> {{ book.summary }}</p>
+          <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+        <!--  <p><strong>Language:</strong> {{ book.language }}</p>-->
+          <p><strong>Language:</strong> {% for bookinstance in book.bookinstance_set.all %} {% ifchanged %} {{ bookinstance.language }} {% endifchanged %}  {% if not forloop.last %}, {% endif %}{% endfor %}</p>
+          <p><strong>Genre:</strong> {% for genre in book.genre.all %} {{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+        </div>
+        <div class="col-sm-6">
+          <p><img alt="" src="{{ book.cover.url }}" style="max-width: 250px"></p>
+        </div>
+      </div>
+  </div>
 
   <div style="margin-left: 20px; margin-top: 20px">
     <h4>Copies</h4>

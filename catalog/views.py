@@ -4,8 +4,10 @@ from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from .utils import get_max_viewed_book
@@ -141,11 +143,12 @@ def renew_book_librarian(request, pk):
             # (здесь мы просто присваиваем их полю due_back)
             book_inst.due_back = form.cleaned_data['renewal_date']
             book_inst.save()
-
+            messages.success(request, "Book's date updated successfully!")
             # Переход по адресу 'all-borrowed':
             return HttpResponseRedirect(reverse('all-borrowed'))
 
     else:
+        messages.warning(request, "Update book's date carefully!")
         proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
         form = RenewBookForm(initial={'renewal_date': proposed_renewal_date, })
 
@@ -178,14 +181,17 @@ class AuthorDelete(LoginRequiredMixin, PermissionRequiredMixin, generic.DeleteVi
     success_url = reverse_lazy('authors')
 
 
-class BookCreate(LoginRequiredMixin, PermissionRequiredMixin, generic.CreateView):
+class BookCreate(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, generic.CreateView):
     permission_required = 'catalog.can_mark_returned'
 
     model = Book
     fields = '__all__'
-    # initial = {'date_of_death': '12/10/2023',}
-
     success_url = reverse_lazy('books')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Book created success.")
+        return response
 
 
 class BookUpdate(LoginRequiredMixin, PermissionRequiredMixin, generic.UpdateView):
@@ -195,6 +201,11 @@ class BookUpdate(LoginRequiredMixin, PermissionRequiredMixin, generic.UpdateView
     fields = '__all__'
 
     success_url = reverse_lazy('books')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, "Book update success!")
+        return response
 
 
 class BookDelete(LoginRequiredMixin, PermissionRequiredMixin, generic.DeleteView):
