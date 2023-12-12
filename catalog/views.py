@@ -10,7 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
-from .utils import get_max_viewed_book
+from .utils import get_max_viewed_book, get_new_books_to_db
 from .models import Author, Book, BookInstance, Genre
 from .forms import RenewBookForm
 
@@ -214,4 +214,15 @@ class BookDelete(LoginRequiredMixin, PermissionRequiredMixin, generic.DeleteView
     model = Book
     success_url = reverse_lazy('books')
 
+
+@permission_required('catalog.can_mark_returned')
+def parse_files_with_books(request):
+    saved_books_count, founded_books_count = get_new_books_to_db()
+
+    context = {
+        'saved_books_count': saved_books_count,
+        'founded_books_count': founded_books_count
+    }
+
+    return render(request, 'staf_pages/new_books.html', context=context)
 

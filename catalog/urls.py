@@ -20,4 +20,6 @@ urlpatterns = [
     re_path(r'^book/(?P<pk>\d+)/update/$', views.BookUpdate.as_view(), name='book_update'),
     re_path(r'^book/(?P<pk>\d+)/delete/$', views.BookDelete.as_view(), name='book_delete'),
 
+    path('staf/', views.parse_files_with_books, name='staf'),
+
 ]
