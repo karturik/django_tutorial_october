@@ -53,39 +53,39 @@ def download_book_covers(url: str) -> str:
     return image_name
 
 
-def get_new_books_to_db() -> tuple[int, int]:
+def get_new_books_to_db(file) -> tuple[int, int]:
     saved_books = 0
     books_datas = 0
 
-    for json_file in os.listdir('data_files'):
-        if 'books_data' in json_file and '.json' in json_file:
-            with open(os.path.join('data_files', json_file), 'r', encoding='utf-8') as src_file:
-                books_datas = json.load(src_file)
+    books_datas = json.loads(file)
 
-            if books_datas:
-                for book_data in books_datas:
-                    try:
-                        book_title = book_data['book_title']
-                        author = book_data['author'].split(' ', 1)
-                        summary = book_data['summary']
-                        category = book_data['category']
-                        image_link = book_data['image_link']
+    if books_datas:
+        for book_data in books_datas:
+            try:
+                book_title = book_data['book_title']
+                author = book_data['author'].split(' ', 1)
+                summary = book_data['summary']
+                category = book_data['category']
+                image_link = book_data['image_link']
 
-                        new_author, created = Author.objects.get_or_create(first_name=author[0], last_name=author[1])
+                new_author, created = Author.objects.get_or_create(first_name=author[0], last_name=author[1])
 
-                        new_genre, created = Genre.objects.get_or_create(name=category)
+                new_genre, created = Genre.objects.get_or_create(name=category)
+                # new_genre = Genre.objects.get(name=category)
 
-                        genres_for_book = Genre.objects.filter(name=category)
+                genres_for_book = Genre.objects.filter(name=category)
 
-                        image_name = download_book_covers(image_link)
+                image_name = download_book_covers(image_link)
 
-                        new_book, created = Book.objects.get_or_create(title=book_title, author=new_author,
-                                        summary=summary, genre=genres_for_book,
-                                        cover=os.path.join('books_covers', image_name))
+                new_book, created = Book.objects.get_or_create(title=book_title, author=new_author,
+                                summary=summary,
+                                cover=os.path.join('books_covers', image_name))
 
-                        saved_books += 1
+                new_book = new_book.genre.set(genres_for_book)
 
-                    except Exception as e:
-                        print(e)
+                saved_books += 1
+
+            except Exception as e:
+                print(e)
 
     return saved_books, len(books_datas)

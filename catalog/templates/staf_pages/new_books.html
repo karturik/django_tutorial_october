@@ -1,2 +1,20 @@
-<h3>Сохранено книг: {{ saved_books_count }}</h3>
-<h3>Всего найдено книг: {{ founded_books_count }}</h3>
+{% extends "base_generic.html" %}
+<h1>Загрузите файл с книгами</h1>
+
+{% block content %}
+  <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table>
+      {{ form.as_table }}
+      </table>
+      <input type="submit" value="Submit">
+  </form>
+
+<form action="{% url 'export-books' %}" method="POST">
+    {% csrf_token %}
+
+    <input type="submit" value="Export books">
+</form>
+
+{% endblock %}
+

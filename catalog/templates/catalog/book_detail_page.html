@@ -14,7 +14,11 @@
           <p><strong>Genre:</strong> {% for genre in book.genre.all %} {{ genre }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
         </div>
         <div class="col-sm-6">
-          <p><img alt="" src="{{ book.cover.url }}" style="max-width: 250px"></p>
+          {% if book.cover %}
+            <p><img alt="" src="{{ book.cover.url }}" style="max-width: 250px"></p>
+          {% else %}
+            <p><img alt="" src="/media/books_covers/upscaled_31.jpg" style="max-width: 250px"></p>
+          {% endif %}
         </div>
       </div>
   </div>

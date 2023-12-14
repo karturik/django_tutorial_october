@@ -20,3 +20,7 @@ class RenewBookForm(forms.Form):
 
         # Помните, что всегда надо возвращать "очищенные" данные.
         return data
+
+
+class UploadBookForm(forms.Form):
+    file = forms.FileField()
