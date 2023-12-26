@@ -3,6 +3,7 @@ import io
 
 import pandas as pd
 
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
 from django.forms import model_to_dict
@@ -219,18 +220,6 @@ class BookDelete(LoginRequiredMixin, PermissionRequiredMixin, generic.DeleteView
     success_url = reverse_lazy('books')
 
 
-# @permission_required('catalog.can_mark_returned')
-# def parse_files_with_books(request):
-#     saved_books_count, founded_books_count = get_new_books_to_db()
-#
-#     context = {
-#         'saved_books_count': saved_books_count,
-#         'founded_books_count': founded_books_count
-#     }
-#
-#     return render(request, 'staf_pages/new_books.html', context=context)
-
-
 @permission_required('catalog.can_mark_returned')
 def parse_files_with_books(request):
     if request.method == 'POST' and request.FILES['file']:
@@ -261,3 +250,37 @@ def export_all_books(request):
         response = FileResponse(buffer, as_attachment=True, filename=filename)
 
         return response
+
+
+def searching(request):
+    if request.method == "POST":
+        searched = request.POST.get('searched')
+        searched_group = request.POST.get('search_group')
+        # print(searched_group)
+        if searched:
+            searched = searched.title()
+            if searched_group == 'books':
+                books_results = Book.objects.filter(title__icontains=searched)
+                full_authots_list = []
+            elif searched_group == 'authors':
+                searched_keywords = searched.split(' ')
+                full_authots_list = []
+                for keyword in searched_keywords:
+                    authors_results = Author.objects.filter(
+                        Q(first_name__icontains=keyword) | Q(last_name__icontains=keyword))
+                    full_authots_list += authors_results
+                books_results = []
+            else:
+                books_results = []
+                full_authots_list = []
+        else:
+            searched = 'None'
+            books_results = []
+            full_authots_list = []
+
+        # print(authors_results)
+        return render(request, "search/search_page.html", {'searched': searched,
+                                                            'books_results': books_results,
+                                                            'authors_results': full_authots_list})
+    else:
+        return render(request, "search/search_page.html")

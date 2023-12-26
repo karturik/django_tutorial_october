@@ -23,4 +23,6 @@ urlpatterns = [
     path('staf/', views.parse_files_with_books, name='staf'),
     path('export_books/', views.export_all_books, name='export-books'),
 
+    path("search/", views.searching, name="searching")
+
 ]

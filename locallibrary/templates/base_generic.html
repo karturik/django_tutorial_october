@@ -35,6 +35,17 @@
               {% else %}
                 <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
               {% endif %}
+              <li>
+                <form class="form-inline" action="{% url 'searching' %}" method="POST">
+                  {% csrf_token %}
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="searched">
+                <select name="search_group">
+                    <option value="books">Книги</option>
+                    <option value="authors">Авторы</option>
+                </select>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </form>
+              </li>
             </ul>
           {% endblock %}
         </div>
